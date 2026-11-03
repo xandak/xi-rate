@@ -33,8 +33,6 @@ Floquet code : 2
 stabilizer code : 1.5
 stabiliser code : 1.5
 self-correct* : 1.5
-fracton : 1.5
-topological order : 1
 
 # Logical operations
 magic state : 2
@@ -43,10 +41,10 @@ transversal : 1.5
 non-Clifford : 1.5
 
 # Noise
-biased noise : 1.5
-noise bias : 1.5
-erasure : 1
-leakage : 1
+biased noise : 2
+noise bias : 2
+erasure : 2
+leakage : 2
 
 # Hardware: between the core (3) and code-family (2-2.5) tiers
 superconducting : 2.75
