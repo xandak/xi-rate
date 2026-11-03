@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "xi-rate",
+  "version": "0.1.0",
+  "description": "Re-sort SciRate listings by your research interests, followed authors, or scites.",
+  "permissions": ["storage"],
+  "host_permissions": ["https://scirate.com/*"],
+  "background": {
+    "service_worker": "src/background.js",
+    "scripts": ["src/background.js"]
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://scirate.com/*"],
+      "js": ["src/scoring.js", "src/prefs.js", "src/scirate.js", "src/content.js"],
+      "css": ["src/content.css"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://scirate.com/*"],
+      "js": ["src/page-hook.js"],
+      "run_at": "document_idle",
+      "world": "MAIN"
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "xi-rate@xandak.github.io",
+      "strict_min_version": "128.0"
+    }
+  }
+}

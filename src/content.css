@@ -1,0 +1,68 @@
+.xirate-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin: 0 0 12px;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fafafa;
+  font-size: 13px;
+}
+
+.xirate-label {
+  font-weight: bold;
+}
+
+.xirate-hide {
+  margin: 0;
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.xirate-hide.xirate-disabled {
+  opacity: 0.45;
+}
+
+.xirate-edit {
+  margin-left: auto;
+}
+
+.xirate-status {
+  flex-basis: 100%;
+  color: #777;
+  font-size: 12px;
+}
+
+.xirate-hidden {
+  display: none !important;
+}
+
+.xirate-badge {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 2px 0 4px;
+  font-size: 12px;
+}
+
+.xirate-badge span {
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+.xirate-badge-authors {
+  background: #e3effc;
+  color: #1f4e85;
+}
+
+.xirate-badge-terms {
+  background: #e6f4e6;
+  color: #2b5f2b;
+}
+
+.xirate-badge-terms.xirate-negative {
+  background: #f8e5e5;
+  color: #8a2b2b;
+}

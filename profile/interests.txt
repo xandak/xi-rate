@@ -1,0 +1,63 @@
+# Starter interests derived from the 273 papers scited by xanda-kolesnikow (Nov 2026).
+# Format: term : weight. Title hit = 3x weight, each abstract hit (max 3) = 1x.
+
+# Core: quantum error correction and fault tolerance
+quantum error correction : 3
+fault-tolerant : 2
+fault tolerance : 2
+logical qubit : 1.5
+logical gate : 1.5
+logical error rate : 1
+threshold : 1
+decod* : 1
+syndrome extraction : 1.5
+
+# Bosonic and continuous-variable codes
+Gottesman-Kitaev-Preskill : 3
+GKP : 3
+bosonic code : 3
+bosonic : 1.5
+cat qubit : 2
+continuous-variable : 1.5
+oscillator : 1
+cluster state : 1
+
+# Code families and constructions
+qLDPC : 2.5
+LDPC : 2
+low-density parity-check : 2
+bivariate bicycle : 2
+surface code : 2
+color code : 1.5
+Floquet code : 2
+stabilizer code : 1.5
+stabiliser code : 1.5
+self-correct* : 1.5
+fracton : 1.5
+topological order : 1
+
+# Logical operations
+magic state : 2
+lattice surgery : 2
+transversal : 1.5
+non-Clifford : 1.5
+
+# Noise
+biased noise : 1.5
+noise bias : 1.5
+erasure : 1
+leakage : 1
+
+# Hardware: between the core (3) and code-family (2-2.5) tiers
+superconducting : 2.75
+transmon : 2.75
+circuit QED : 2.75
+trapped ion : 2.75
+fluxonium : 2.75
+circuit quantization : 2.75
+
+# Secondary: open quantum systems
+open quantum system : 1
+Lindblad : 1
+master equation : 1
+non-Markovian* : 1

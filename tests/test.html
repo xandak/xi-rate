@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>xi-rate tests</title>
+  <style>
+    body { font: 14px/1.5 system-ui, sans-serif; margin: 16px; background: #fff; color: #222; }
+    .pass { color: #2b7a2b; }
+    .fail { color: #b22; font-weight: bold; }
+    pre { margin: 0 0 0 1.5em; color: #b22; }
+  </style>
+</head>
+<body>
+  <h1>xi-rate tests</h1>
+  <p id="summary">Running…</p>
+  <ol id="results"></ol>
+  <script src="harness.js"></script>
+  <script src="../src/scoring.js"></script>
+  <script src="../src/scirate.js"></script>
+  <script src="scoring.test.js"></script>
+  <script src="scirate.test.js"></script>
+  <script>runTests();</script>
+</body>
+</html>

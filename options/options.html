@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>xi-rate settings</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <main>
+    <h1>ξ-rate settings</h1>
+
+    <section>
+      <h2><label for="interests">Interests</label></h2>
+      <p class="help">
+        One term or phrase per line, optionally followed by <code>: weight</code> (default 1; negative weights push papers down).
+        Matching ignores case, accents and LaTeX, and allows plurals. End a term with <code>*</code> for a prefix match.
+        A title match counts 3&times; the weight; each abstract match (up to 3) counts 1&times;. Lines starting with <code>#</code> are ignored.
+      </p>
+      <textarea id="interests" rows="12" spellcheck="false" placeholder="quantum error correction : 3&#10;surface code&#10;entangle* : 0.5&#10;cosmology : -2"></textarea>
+    </section>
+
+    <section>
+      <h2><label for="authors">Authors</label></h2>
+      <p class="help">
+        One author per line, as <code>First Last</code> or <code>Last, First</code> (use the comma form for multi-word surnames such as <code>van den Berg, Ewout</code>).
+        Matching uses the surname and first initial. Optional <code>: weight</code> as above.
+      </p>
+      <textarea id="authors" rows="8" spellcheck="false" placeholder="John Preskill&#10;Terhal, Barbara : 2&#10;van den Berg, Ewout"></textarea>
+    </section>
+
+    <section>
+      <h2>Listing</h2>
+      <label class="row"><input type="checkbox" id="fetchAllPages"> Load every page of the current date range before sorting (SciRate shows 50 papers per page)</label>
+      <label class="row">Load at most <input type="number" id="maxPages" min="1" max="50"> pages</label>
+    </section>
+
+    <div class="actions">
+      <button id="save" type="button">Save</button>
+      <button id="starter" type="button" title="Replace both lists with the starter lists in profile/ (not saved until you click Save)">Restore starter lists</button>
+      <span id="saved" role="status"></span>
+    </div>
+  </main>
+  <script src="../src/prefs.js"></script>
+  <script src="../src/scoring.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

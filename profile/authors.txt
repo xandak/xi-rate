@@ -1,0 +1,39 @@
+# Starter author list: authors on 5+ of the 273 papers scited by xanda-kolesnikow (Nov 2026).
+# Large-collaboration authors who appear only via Google Quantum AI papers are left out.
+# Format: First Last, or Last, First; optional : weight.
+
+Kolesnikow, Xanda : 3
+
+# 10+ scited papers
+Bartlett, Stephen : 2
+Williamson, Dominic : 2
+Brown, Benjamin : 2
+Baspin, Nouedyn : 2
+Harper, Robin : 2
+Doherty, Andrew : 2
+
+# 5-9 scited papers
+Singh, Shraddha
+Eickbusch, Alec
+Nixon, Georgia
+Eisert, Jens
+Lee, Seok-Hyung
+Hillmann, Timo
+Conrad, Jonathan
+McLauchlan, Campbell
+Shaw, Mackenzie
+Royer, Baptiste
+Albert, Victor
+Terhal, Barbara
+Baragiola, Ben
+Menicucci, Nicolas
+Webster, Mark
+Berent, Lucas
+Cohen, Lawrence
+Shillito, Ross
+Hann, Connor
+Blais, Alexandre
+Smith, W. Clarke
+Lacroix, Nathan
+Oliver, William
+Babbush, Ryan
