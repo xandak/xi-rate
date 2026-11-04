@@ -59,6 +59,51 @@ test('author matching handles initials, comma form and accents', () => {
   assert(!X.authorMatches('Ewout Berg', vdb), 'partial compound surname');
 });
 
+test('hyphenated given names match in all their usual spellings', () => {
+  const [lee] = X.compileAuthors('Lee, Seok-Hyung');
+  for (const name of ['Seok-Hyung Lee', 'Seok-hyung Lee', 'Seokhyung Lee', 'Seok Hyung Lee', 'S.-H. Lee',
+    'S-H Lee', 'S-H. Lee', 'S.H. Lee', 'S. H. Lee', 'SH Lee', 'Seok H. Lee', 'Lee, Seok-Hyung', 'Lee, S.-H.']) {
+    assert(X.authorMatches(name, lee), name);
+  }
+  for (const name of ['Seung-Woo Lee', 'S.-W. Lee', 'SW Lee', 'S. Lee', 'Seok Lee', 'Jaehak Lee', 'Seok-Hyung Leem']) {
+    assert(!X.authorMatches(name, lee), name);
+  }
+  const [run] = X.compileAuthors('Seokhyung Lee');
+  assert(X.authorMatches('Seok-Hyung Lee', run), 'entry written without hyphen');
+  const [ini] = X.compileAuthors('S.-H. Lee');
+  assert(X.authorMatches('Seok-Hyung Lee', ini), 'entry written as initials');
+  assert(!X.authorMatches('Seung-Woo Lee', ini), 'initials entry, other person');
+});
+
+test('the 2610.38914 author list does not match Seok-Hyung Lee', () => {
+  const compiled = { interests: [], authors: X.compileAuthors('Lee, Seok-Hyung') };
+  const p = paper({ authors: ['Seong-Yeop Lim', 'Jaehak Lee', 'Nuri Kang', 'Seung-Woo Lee'] });
+  assertEqual(X.scorePaper(p, compiled).matchedAuthors, []);
+});
+
+test('middle names may be omitted but must agree when given', () => {
+  const [smith] = X.compileAuthors('Smith, W. Clarke');
+  assert(X.authorMatches('W. Clarke Smith', smith));
+  assert(X.authorMatches('W. C. Smith', smith));
+  assert(X.authorMatches('William Smith', smith));
+  assert(X.authorMatches('Clarke Smith', smith), 'goes by middle name');
+  assert(!X.authorMatches('W. J. Smith', smith), 'different middle initial');
+  const [brown] = X.compileAuthors('Brown, Benjamin');
+  assert(X.authorMatches('Benjamin J. Brown', brown));
+  assert(X.authorMatches('Ben Brown', brown), 'short form');
+  const [albert] = X.compileAuthors('Albert, Victor');
+  assert(X.authorMatches('Victor V. Albert', albert));
+  assert(!X.authorMatches('Victoria Albert', albert), 'longer name is a different person');
+});
+
+test('First Last entries keep surname particles and paper names drop suffixes', () => {
+  const [vdb] = X.compileAuthors('Ewout van den Berg');
+  assertEqual(vdb.surname, ['van', 'den', 'berg']);
+  assert(X.authorMatches('E. van den Berg', vdb));
+  const [p] = X.compileAuthors('John Preskill');
+  assert(X.authorMatches('John Preskill Jr.', p));
+});
+
 test('surname-only entries match any first name', () => {
   const [a] = X.compileAuthors('Terhal');
   assert(X.authorMatches('Barbara M. Terhal', a));

@@ -8,7 +8,7 @@
     sortMode: 'interest',
     hideNonMatching: false,
     fetchAllPages: true,
-    maxPages: 10,
+    maxPages: 50,
   };
 
   async function loadPrefs() {

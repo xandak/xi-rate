@@ -48,22 +48,54 @@
     }).filter(Boolean);
   }
 
-  // "Last, First" or "First Middle Last". Returns surname tokens and first initial.
+  // --- Author names -------------------------------------------------------
+  //
+  // Given names are split into groups (space-separated words) of parts
+  // (hyphen- or dot-separated pieces), so "Seok-Hyung", "S.-H.", "S-H.",
+  // "S.H." and "SH" all become the parts [seok, hyung] or [s, h]. A
+  // followed author's first given name (one group, all of its parts) must be
+  // present in the paper's name: each part spelled out or as its initial, or
+  // run together ("Seokhyung"). So "Lee, Seok-Hyung" matches "S.-H. Lee" and
+  // "Seokhyung Lee" but not "Seung-Woo Lee", "S.-W. Lee" or a bare "S. Lee".
+  // Middle names may be left out on either side, but where both give one
+  // they must agree. Surnames must match exactly (accents and case ignored).
+
+  const SURNAME_PARTICLES = new Set(['van', 'von', 'der', 'den', 'de', 'del', 'della', 'dos', 'ter', 'ten']);
+  const SUFFIX = /,?\s+(?:jr|sr|ii|iii|iv)\.?$/i;
+
+  function stripAccents(s) {
+    return s.normalize('NFD').replace(/[̀-ͯ]/g, '');
+  }
+
+  // One raw given-name word to its lowercase parts. A short all-caps word
+  // such as "SH" or "JP" is a run of initials.
+  function givenParts(word) {
+    const w = stripAccents(word);
+    if (/^[A-Z]{2,3}$/.test(w)) return w.toLowerCase().split('');
+    return w.toLowerCase().split(/[.\-‐-―]+/).map((p) => p.replace(/[^a-z]/g, '')).filter(Boolean);
+  }
+
+  function givenGroups(text) {
+    return (text || '').trim().split(/\s+/).map(givenParts).filter((g) => g.length);
+  }
+
+  // "Last, First" or "First Middle Last" (with lowercase particles such as
+  // "van den" kept in the surname). Returns normalized surname tokens and
+  // given-name groups.
   function parseAuthorName(name) {
+    name = name.trim().replace(SUFFIX, '');
     let first = '';
     let last = name;
     if (name.includes(',')) {
       [last, first] = name.split(',', 2);
     } else {
-      const parts = name.trim().split(/\s+/);
-      last = parts.pop();
-      first = parts.join(' ');
+      const words = name.split(/\s+/);
+      let i = words.length - 1;
+      while (i > 1 && SURNAME_PARTICLES.has(words[i - 1].toLowerCase())) i--;
+      last = words.slice(i).join(' ');
+      first = words.slice(0, i).join(' ');
     }
-    const firstTokens = normalize(first).split(' ').filter(Boolean);
-    return {
-      surname: normalize(last).split(' ').filter(Boolean),
-      initial: firstTokens.length ? firstTokens[0][0] : '',
-    };
+    return { surname: normalize(last).split(' ').filter(Boolean), given: givenGroups(first) };
   }
 
   function compileAuthors(text) {
@@ -73,16 +105,75 @@
     }).filter(Boolean);
   }
 
-  // A paper author such as "John P. Preskill" matches "Preskill, John" or "J Preskill".
+  // Two name parts agree if equal, or if either is an initial of the other.
+  function partAgrees(q, p) {
+    return q.length === 1 || p.length === 1 ? q[0] === p[0] : q === p;
+  }
+
+  // Consume all of `want` (a followed author's first given name) from the
+  // start of `have` (the paper's given-name parts). Returns the index in
+  // `have` just past it, or -1.
+  function consumeFirstName(have, want) {
+    let i = 0;
+    let j = 0;
+    outer: while (j < want.length) {
+      if (i >= have.length) return -1;
+      const q = have[i];
+      const p = want[j];
+      if (partAgrees(q, p)) { i++; j++; continue; }
+      // Paper runs the parts together: "Seokhyung" for "Seok-Hyung".
+      for (let k = j + 1, s = p; k < want.length; k++) {
+        s += want[k];
+        if (s === q) { i++; j = k + 1; continue outer; }
+        if (!q.startsWith(s)) break;
+      }
+      // Paper splits what the followed entry runs together: "Seok-Hyung" for "Seokhyung".
+      for (let k = i + 1, s = q; k < have.length; k++) {
+        s += have[k];
+        if (s === p) { i = k + 1; j++; continue outer; }
+        if (!p.startsWith(s)) break;
+      }
+      // Short form of a single-part first name: "Ben" for "Benjamin".
+      if (want.length === 1 && q.length >= 3 && p.startsWith(q)) { i++; j++; continue; }
+      return -1;
+    }
+    return i;
+  }
+
+  function givenMatches(have, groups) {
+    if (!groups.length || !have.length) return true;
+    const [firstName, ...rest] = groups;
+    const end = consumeFirstName(have, firstName);
+    if (end >= 0) {
+      const middle = rest.flat();
+      const paperMiddle = have.slice(end);
+      const n = Math.min(middle.length, paperMiddle.length);
+      for (let k = 0; k < n; k++) if (!partAgrees(paperMiddle[k], middle[k])) return false;
+      return true;
+    }
+    // "Smith, W. Clarke" may publish as "Clarke Smith".
+    return firstName.length === 1 && firstName[0].length === 1 && rest.length > 0 && givenMatches(have, rest);
+  }
+
+  // Does a paper author string such as "Seok-Hyung Lee" or "S.-H. Lee" name
+  // the followed author?
   function authorMatches(paperAuthor, followed) {
-    const tokens = normalize(paperAuthor).split(' ').filter(Boolean);
-    const n = followed.surname.length;
-    if (tokens.length < n) return false;
-    const tail = tokens.slice(tokens.length - n);
-    if (tail.join(' ') !== followed.surname.join(' ')) return false;
-    if (!followed.initial) return true;
-    const given = tokens.slice(0, tokens.length - n);
-    return given.length === 0 || given[0][0] === followed.initial;
+    let raw = paperAuthor.trim().replace(SUFFIX, '');
+    if (raw.includes(',')) {
+      const [last, first] = raw.split(',', 2);
+      raw = `${first} ${last}`;
+    }
+    // Take words off the end until they make up the followed surname.
+    const words = raw.split(/\s+/).filter(Boolean);
+    const want = followed.surname.join(' ');
+    let i = words.length;
+    let tail = [];
+    while (i > 0 && tail.length < followed.surname.length) {
+      tail = normalize(words.slice(--i).join(' ')).split(' ').filter(Boolean);
+    }
+    if (tail.join(' ') !== want) return false;
+    const have = words.slice(0, i).flatMap(givenParts);
+    return givenMatches(have, followed.given);
   }
 
   function countMatches(regex, text) {

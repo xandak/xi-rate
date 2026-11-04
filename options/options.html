@@ -23,7 +23,7 @@
       <h2><label for="authors">Authors</label></h2>
       <p class="help">
         One author per line, as <code>First Last</code> or <code>Last, First</code> (use the comma form for multi-word surnames such as <code>van den Berg, Ewout</code>).
-        Matching uses the surname and first initial. Optional <code>: weight</code> as above.
+        The surname must match exactly, and the first given name must match in full or as initials, so <code>Lee, Seok-Hyung</code> matches <code>S.-H. Lee</code>, <code>SH Lee</code> or <code>Seokhyung Lee</code> but not <code>Seung-Woo Lee</code> or a bare <code>S. Lee</code>. Middle names may be left out. Optional <code>: weight</code> as above.
       </p>
       <textarea id="authors" rows="8" spellcheck="false" placeholder="John Preskill&#10;Terhal, Barbara : 2&#10;van den Berg, Ewout"></textarea>
     </section>

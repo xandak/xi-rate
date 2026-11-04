@@ -18,7 +18,7 @@ On first install, the interest and author lists are filled from [profile/interes
 2. Add interests (one per line, optional `: weight`) and authors (`First Last` or `Last, First`).
 3. On a SciRate listing, use the **Interests / Authors / Scites** buttons in the ξ-rate bar. *Hide non-matching* hides papers that match nothing.
 
-SciRate shows 50 papers per page. By default ξ-rate fetches up to 10 pages of the current date range and sorts them together; the limit is in the options.
+SciRate shows 50 papers per page. By default ξ-rate fetches up to 50 pages of the current date range and sorts them together; the limit is in the options.
 
 Matched terms and authors appear as small badges under each title.
 
