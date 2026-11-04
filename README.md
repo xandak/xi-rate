@@ -14,7 +14,7 @@ After pulling changes, click the reload button on the extension card and refresh
 
 On first install, the interest and author lists are filled from [profile/interests.txt](profile/interests.txt) and [profile/authors.txt](profile/authors.txt), starter lists built from my SciRate scite history. *Restore starter lists* on the options page reloads them.
 
-> **Not me?** The starter lists reflect my research (quantum error correction, bosonic codes, superconducting hardware) and the authors I follow, so your ranking starts out tuned to them. Replace them with your own in the options page before relying on the order. To ship your own defaults, edit the two files in `profile/` before installing; the extension only reads them on first install or when you click *Restore starter lists*.
+> **Not Xanda?** The starter lists reflect Xanda's research interests (quantum error correction, bosonic codes, superconducting hardware) and the authors he follows, so your ranking starts out tuned to them. Replace them with your own in the options page before relying on the order. To ship your own defaults, edit the two files in `profile/` before installing; the extension only reads them on first install or when you click *Restore starter lists*.
 
 1. Open the extension's options (the *edit interests* link in the ξ-rate bar on any SciRate listing, or the extension's *Options* entry).
 2. Add interests (one per line, optional `: weight`) and authors (`First Last` or `Last, First`).
