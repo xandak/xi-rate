@@ -131,13 +131,26 @@
       e.paper.scites = parseInt(e.el.querySelector('.scites-count .count')?.textContent, 10) || 0;
       e.score = X.scorePaper(e.paper, compiled);
       annotate(e);
-      const hide = hasPrefs && prefs.hideNonMatching && prefs.sortMode !== 'scites' && !X.isMatch(e.score);
-      e.el.classList.toggle('xirate-hidden', hide);
     }
     const frag = document.createDocumentFragment();
     for (const e of X.sortEntries(entries, prefs.sortMode)) frag.appendChild(e.el);
     list.prepend(frag);
     toolbar.update(hasPrefs);
+    applyFilter(prefs.minScore[prefs.sortMode]);
+  }
+
+  // Show or hide papers against a threshold in the current mode's score, and
+  // reflect it on the slider. Cheap, so it runs on every slider movement.
+  function applyFilter(stored) {
+    const range = X.thresholdRange(entries.map((e) => e.score), prefs.sortMode);
+    const threshold = X.effectiveThreshold(stored, range);
+    let hidden = 0;
+    for (const e of entries) {
+      const hide = !X.isShown(e.score, prefs.sortMode, threshold);
+      e.el.classList.toggle('xirate-hidden', hide);
+      if (hide) hidden++;
+    }
+    toolbar.setFilter(range, threshold, hidden);
   }
 
   function annotate(e) {
@@ -203,17 +216,25 @@
     });
     el.appendChild(group);
 
-    const hideLabel = document.createElement('label');
-    hideLabel.className = 'xirate-hide';
-    const hide = document.createElement('input');
-    hide.type = 'checkbox';
-    hide.addEventListener('change', () => {
-      prefs.hideNonMatching = hide.checked;
-      render();
-      X.savePrefs({ hideNonMatching: hide.checked });
+    const filterLabel = document.createElement('label');
+    filterLabel.className = 'xirate-filter';
+    const slider = document.createElement('input');
+    slider.type = 'range';
+    const filterText = document.createElement('span');
+    filterText.className = 'xirate-filter-text';
+    // Filter live while dragging; save once on release (storage.sync has a write quota).
+    const sliderValue = () => {
+      const v = parseFloat(slider.value);
+      return v <= parseFloat(slider.min) ? null : v;
+    };
+    slider.addEventListener('input', () => applyFilter(sliderValue()));
+    slider.addEventListener('change', () => {
+      const minScore = { ...prefs.minScore, [prefs.sortMode]: sliderValue() };
+      prefs.minScore = minScore;
+      X.savePrefs({ minScore });
     });
-    hideLabel.append(hide, ' hide non-matching');
-    el.appendChild(hideLabel);
+    filterLabel.append('hide below ', slider, filterText);
+    el.appendChild(filterLabel);
 
     const edit = document.createElement('a');
     edit.href = '#';
@@ -234,11 +255,20 @@
       status,
       update(hasPrefs) {
         for (const [mode, b] of buttons) b.classList.toggle('btn-primary', mode === prefs.sortMode);
-        hide.checked = prefs.hideNonMatching;
-        hideLabel.classList.toggle('xirate-disabled', prefs.sortMode === 'scites');
         status.textContent = hasPrefs
           ? statusSummary()
           : 'No interests or authors set yet; use "edit interests" to add them.';
+      },
+      setFilter(range, threshold, hidden) {
+        slider.min = range.min;
+        slider.max = range.max;
+        slider.step = range.step;
+        slider.value = threshold == null ? range.min : threshold;
+        slider.disabled = range.max <= range.min;
+        filterLabel.classList.toggle('xirate-disabled', slider.disabled);
+        const unit = { interest: 'interest score', author: 'author score', scites: 'scites' }[prefs.sortMode];
+        filterLabel.title = `Hide papers whose ${unit} is below the slider value`;
+        filterText.textContent = threshold == null ? ' off' : ` ${fmt(threshold)} (${hidden} hidden)`;
       },
     };
   }

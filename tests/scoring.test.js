@@ -127,6 +127,33 @@ test('starter lists in profile/ parse and match as intended', async () => {
   assert(!score.matchedTerms.includes('LDPC'), 'LDPC should not match inside qLDPC');
 });
 
+test('thresholdRange spans 0 or the lowest score up to the highest, on the step grid', () => {
+  const s = (interest, author, scites) => ({ interest, author, scites });
+  const scores = [s(-6, 0, 3), s(0, 2, 40), s(13.7, 1.5, 0)];
+  assertEqual(X.thresholdRange(scores, 'interest'), { min: -6, max: 13.5, step: 0.5 });
+  assertEqual(X.thresholdRange(scores, 'author'), { min: 0, max: 2, step: 0.5 });
+  assertEqual(X.thresholdRange(scores, 'scites'), { min: 0, max: 40, step: 1 });
+  assertEqual(X.thresholdRange([], 'interest'), { min: 0, max: 0, step: 0.5 });
+});
+
+test('effectiveThreshold treats the lower end as off and clamps to the upper end', () => {
+  const range = { min: -6, max: 13.5, step: 0.5 };
+  assertEqual(X.effectiveThreshold(null, range), null);
+  assertEqual(X.effectiveThreshold(-6, range), null);
+  assertEqual(X.effectiveThreshold(4, range), 4);
+  assertEqual(X.effectiveThreshold(20, range), 13.5);
+});
+
+test('isShown filters on the current mode\'s primary score', () => {
+  const score = { interest: 3, author: 0, scites: 12 };
+  assert(X.isShown(score, 'interest', null));
+  assert(X.isShown(score, 'interest', 3));
+  assert(!X.isShown(score, 'interest', 3.5));
+  assert(!X.isShown(score, 'author', 0.5));
+  assert(X.isShown(score, 'scites', 12));
+  assert(!X.isShown(score, 'scites', 13));
+});
+
 test('sortEntries orders by mode with tie-breaks and original order', () => {
   const e = (index, interest, author, scites) => ({ index, score: { interest, author, scites } });
   const entries = [e(0, 0, 0, 9), e(1, 5, 0, 1), e(2, 5, 1, 0), e(3, 0, 2, 3), e(4, 0, 0, 9)];

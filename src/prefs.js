@@ -6,14 +6,15 @@
     interestsText: '',
     authorsText: '',
     sortMode: 'interest',
-    hideNonMatching: false,
+    // Per sort mode: hide papers whose score in that mode is below this (null = show all).
+    minScore: { interest: null, author: null, scites: null },
     fetchAllPages: true,
     maxPages: 50,
   };
 
   async function loadPrefs() {
     const stored = await chrome.storage.sync.get(DEFAULT_PREFS);
-    return { ...DEFAULT_PREFS, ...stored };
+    return { ...DEFAULT_PREFS, ...stored, minScore: { ...DEFAULT_PREFS.minScore, ...stored.minScore } };
   }
 
   function savePrefs(patch) {

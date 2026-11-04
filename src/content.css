@@ -15,13 +15,25 @@
   font-weight: bold;
 }
 
-.xirate-hide {
+.xirate-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   margin: 0;
   font-weight: normal;
-  cursor: pointer;
 }
 
-.xirate-hide.xirate-disabled {
+.xirate-filter input[type="range"] {
+  width: 140px;
+  margin: 0;
+}
+
+.xirate-filter-text {
+  min-width: 7em;
+  font-variant-numeric: tabular-nums;
+}
+
+.xirate-filter.xirate-disabled {
   opacity: 0.45;
 }
 

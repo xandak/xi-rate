@@ -16,7 +16,7 @@ On first install, the interest and author lists are filled from [profile/interes
 
 1. Open the extension's options (the *edit interests* link in the ξ-rate bar on any SciRate listing, or the extension's *Options* entry).
 2. Add interests (one per line, optional `: weight`) and authors (`First Last` or `Last, First`).
-3. On a SciRate listing, use the **Interests / Authors / Scites** buttons in the ξ-rate bar. *Hide non-matching* hides papers that match nothing.
+3. On a SciRate listing, use the **Interests / Authors / Scites** buttons in the ξ-rate bar. The *hide below* slider hides papers whose score in the current mode (interest score, author score or scites) is below the chosen value, so it trims the tail of the sorted list; all the way left shows everything. Each mode remembers its own setting.
 
 SciRate shows 50 papers per page. By default ξ-rate fetches up to 50 pages of the current date range and sorts them together; the limit is in the options.
 

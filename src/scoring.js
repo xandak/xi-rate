@@ -226,6 +226,34 @@
     });
   }
 
+  // The score a mode sorts by first; the toolbar slider filters on it, so
+  // hiding papers below a threshold trims the tail of the sorted list.
+  function primaryScore(score, mode) {
+    return score[(SORT_KEYS[mode] || SORT_KEYS.scites)[0]];
+  }
+
+  // Slider bounds for a mode, on a grid of `step`. The lower end shows
+  // everything (it is never above 0 or the lowest score); the upper end is
+  // at most the highest score, so the top paper always stays visible.
+  function thresholdRange(scores, mode) {
+    const step = mode === 'scites' ? 1 : 0.5;
+    const values = scores.map((s) => primaryScore(s, mode));
+    const lo = Math.min(0, ...values);
+    const hi = Math.max(0, ...values);
+    return { min: Math.floor(lo / step) * step, max: Math.floor(hi / step) * step, step };
+  }
+
+  // A stored threshold of null (or anything at or below the range's lower
+  // end) hides nothing; one above the upper end is treated as the upper end.
+  function effectiveThreshold(stored, range) {
+    if (stored == null || stored <= range.min) return null;
+    return Math.min(stored, range.max);
+  }
+
+  function isShown(score, mode, threshold) {
+    return threshold == null || primaryScore(score, mode) >= threshold;
+  }
+
   function isMatch(score) {
     return score.interest > 0 || score.author > 0;
   }
@@ -248,5 +276,9 @@
     scorePaper,
     sortEntries,
     isMatch,
+    primaryScore,
+    thresholdRange,
+    effectiveThreshold,
+    isShown,
   });
 })(typeof globalThis !== 'undefined' ? globalThis : this);
